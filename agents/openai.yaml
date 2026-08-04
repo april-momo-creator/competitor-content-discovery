@@ -1,0 +1,4 @@
+interface:
+  display_name: "Competitor Content Discovery"
+  short_description: "Discover, classify, and map competitor content sources"
+  default_prompt: "Use $competitor-content-discovery to run product intake, competitor discovery, competitor layering, positioning, differentiation, owned social mapping, social search mapping, and content candidate collection."

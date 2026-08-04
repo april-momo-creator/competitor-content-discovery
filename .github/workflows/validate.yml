@@ -1,0 +1,48 @@
+name: Validate skill
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.11"
+
+      - name: Check public skill structure
+        shell: python
+        run: |
+          from pathlib import Path
+
+          root = Path.cwd()
+          skill = (root / "SKILL.md").read_text(encoding="utf-8")
+          assert skill.startswith("---\nname: competitor-content-discovery\ndescription: ")
+          assert "\n---\n" in skill[4:]
+          assert "[" + "TO" + "DO" not in skill
+          assert (root / "agents" / "openai.yaml").is_file()
+
+          expected = [
+              "01-product-intake-keywords.md",
+              "02-competitor-candidate-discovery.md",
+              "03-competitor-pool-layering.md",
+              "04-competitor-positioning-card.md",
+              "05-differentiation-hypothesis-matrix.md",
+              "06-owned-social-map.md",
+              "07-social-search-map-builder.md",
+              "08-content-candidate-collector.md",
+          ]
+          for name in expected:
+              assert (root / "references" / name).is_file(), name
